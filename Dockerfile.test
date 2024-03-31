@@ -1,0 +1,16 @@
+#
+# Use this docker image to execute the integration test on AWS.
+# This is primarily useful to maintainers of the Borealis project.
+#
+# Usage:
+# docker build -t test . -f Dockerfile.test
+# docker run --rm -v ~/.aws:/root/.aws -it test
+
+FROM public.ecr.aws/sam/build-python3.12
+WORKDIR /sam-app
+COPY sam-app /sam-app
+ENV AWS_PROFILE=dev
+ENV AWS_DEFAULT_REGION=us-west-2
+RUN python tests/unit/test_handler.py
+
+CMD ["python", "tests/integration/test_iac.py"]
